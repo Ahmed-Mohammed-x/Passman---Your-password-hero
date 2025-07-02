@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}Add Password - Secure Password Manager{% endblock %}
+
+{% block content %}
+<h2>Add New Password</h2>
+<form method="POST" action="{{ url_for('add_pw') }}">
+    <div>
+        <label for="site_name">Site/app Name</label>
+        <input type="text" id="site_name" name="site_name" required>
+    </div>
+    <div>
+        <label for="username">Username/email</label>
+        <input type="text" id="username" name="username" required>
+    </div>
+    <div>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required>
+        <button type="button" onclick="generatePassword()">Want a strong password? ;)</button>
+    </div>
+
+    <div style="height: 10px;"></div>
+
+    <button type="submit">Save Password</button>
+</form>
+
+<div id="generated-password" style="margin-top: 20px; display: none;">
+    <h3>Generated Password</h3>
+    <div style="display: flex; align-items: center;">
+        <input type="text" id="gen-password" readonly style="flex-grow: 1;">
+        <button onclick="copyGeneratedPassword()">Copy</button>
+        <button onclick="useGeneratedPassword()">Use</button>
+    </div>
+    <div style="margin-top: 10px;">
+        <label>Length:</label>
+        <select id="password-length">
+            <option value="12">12</option>
+            <option value="16" selected>16</option>
+            <option value="20">20</option>
+            <option value="24">24</option>
+        </select>
+        <label style="margin-left: 15px;">
+            <input type="checkbox" id="special-chars" checked>
+            Include special characters
+        </label>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function generatePassword() {
+        const length = document.getElementById('password-length').value;
+        const special = document.getElementById('special-chars').checked;
+        
+        fetch(`/generate-password?length=${length}&special=${special}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('gen-password').value = data.password;
+                document.getElementById('generated-password').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error generating password:', error);
+            });
+    }
+    
+    function copyGeneratedPassword() {
+        const password = document.getElementById('gen-password').value;
+        navigator.clipboard.writeText(password)
+            .then(() => {
+                alert('Password copied to clipboard!');
+            })
+            .catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+    }
+    
+    function useGeneratedPassword() {
+        const password = document.getElementById('gen-password').value;
+        document.getElementById('password').value = password;
+    }
+    
+    // Show the password generator
+    document.addEventListener('DOMContentLoaded', function() {
+        document.getElementById('generated-password').style.display = 'block';
+        generatePassword();
+    });
+</script>
+{% endblock %}

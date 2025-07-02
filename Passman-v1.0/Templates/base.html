@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Passman at your service ^_^{% endblock %}</title>
+    <style>
+
+        .logo a {
+            font-family: "Franklin Gothic Demi",serif;
+            font-size: 2.1rem;
+            font-weight: bold;
+            text-decoration: floralwhite;
+        }
+        body {
+            font-family: "Times New Roman", sans-serif;
+            line-height: 1.8;
+            margin: 0;
+            padding: 0;
+            background-color: #ffffff;
+        }
+        .container {
+            width: 75%;
+            margin: auto;
+            overflow: auto;
+            padding: 20px;
+        }
+        header {
+            background: #303030;
+            color: white;
+            padding: 1rem;
+            text-align: center;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        nav ul li {
+            margin-left: 30px;
+        }
+        nav a {
+            color: white;
+            text-decoration: darkslategrey;
+        }
+        .alert {
+            padding: 10px;
+            margin: 15px 0;
+            border-radius: 5px;
+            color: #721c24;
+        }
+        .alert-success {
+            background-color: #afffd9;
+            color: #155724;
+        }
+        .alert-danger {
+            background-color: #ffdede;
+            color: #a60614;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        button {
+            background: rgb(41, 41, 41);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+        button:hover {
+            background: #555;
+        }
+        footer {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin-top: 30px;
+        }
+        .password-list {
+            margin-top: 20px;
+        }
+        .password-item {
+            background: #b5b3b3;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .password-actions {
+            display: block;
+            gap: 10px;
+        }
+    </style>
+    {% block styles %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="{{ url_for('landing_page') }}">Passman - Your Secure Password Manager </a>
+            </div>
+            <ul>
+                {% if session.get('user_id') %}
+                    <li><a href="{{ url_for('pw_safe') }}">home</a></li>
+                    <li><a href="{{ url_for('add_pw') }}">Add Password</a></li>
+                    <li><a href="{{ url_for('logout_user') }}">Logout</a></li>
+                {% else %}
+                    <li><a href="{{ url_for('login') }}">Login</a></li>
+                    <li><a href="{{ url_for('new_user') }}">Register/sign up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer>
+        <p>© 2025 Passman v1.0 🛡️</p>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>
